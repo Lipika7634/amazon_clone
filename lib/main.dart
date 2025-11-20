@@ -8,6 +8,7 @@ import 'Pages/account.dart';
 import 'package:amazon_clone/utilities/theme.dart';
 import 'package:provider/provider.dart';
 import 'Provider/userDetailsProvider.dart';
+import 'package:amazon_clone/Screens/sellScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ class HomePage extends StatelessWidget {
       providers: [ChangeNotifierProvider(create: (_) => UserDetailsProvider())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: MainPage(),
+        home: MainPage()
       ),
     );
   }
@@ -62,16 +63,16 @@ class _MainPageState extends State<MainPage> {
       length: 4,
       child: Scaffold(
         body: PageView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           controller: controller,
           children: [
-            home(),
+            const home(),
             Account(),
             cart(),
-            items()
+            const items()
           ],
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: SizedBox(
           height: 48,
           child: TabBar(
             indicator: const BoxDecoration(

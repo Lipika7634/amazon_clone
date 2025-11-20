@@ -6,6 +6,8 @@ import 'package:amazon_clone/Widgets/app_bar.dart';
 import 'package:amazon_clone/utilities/constant.dart';
 import 'package:amazon_clone/Widgets/extra_widget.dart';
 import 'package:amazon_clone/Screens/Results.dart';
+import 'package:amazon_clone/Widgets/loading_widget.dart';
+import 'package:amazon_clone/Resources/cloudFirestore_method.dart';
 
 class home extends StatefulWidget {
   const home({Key? key}) : super(key: key);
@@ -17,6 +19,10 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
   ScrollController scroll = ScrollController();
   double offset = 0;
+  List<Widget>? discount70;
+  List<Widget>? discount60;
+  List<Widget>? discount50;
+  List<Widget>? discount0;
 
   @override
   void dispose() {
@@ -27,10 +33,25 @@ class _homeState extends State<home> {
   @override
   void initState() {
     super.initState();
+    getData();
     scroll.addListener(() {
       setState(() {
         offset = scroll.position.pixels;
       });
+    });
+  }
+
+  void getData() async {
+    List<Widget> temp70 = await CloudFirestoreClass().getProductsFromDiscount(70);
+    List<Widget> temp60 = await CloudFirestoreClass().getProductsFromDiscount(60);
+    List<Widget> temp50 = await CloudFirestoreClass().getProductsFromDiscount(50);
+    List<Widget> temp0 = await CloudFirestoreClass().getProductsFromDiscount(0);
+    print("everything is done");
+    setState(() {
+      discount70 = temp70;
+      discount60 = temp60;
+      discount50 = temp50;
+      discount0 = temp0;
     });
   }
 
@@ -39,7 +60,11 @@ class _homeState extends State<home> {
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: SearchBarWidget(type: false, back: false),
-      body: Stack(
+      body: discount70 != null &&
+              discount60 != null &&
+              discount50 != null &&
+              discount0 != null
+        ? Stack(
         children: [
           SingleChildScrollView(
             controller: scroll,
@@ -139,7 +164,8 @@ class _homeState extends State<home> {
           ),
           UserDetails(offset: offset),
         ],
-      ),
+      )
+      : const LoadingWidget(),
     );
   }
 }

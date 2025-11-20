@@ -2,8 +2,13 @@ import 'dart:typed_data';
 import 'package:amazon_clone/Widgets/Box_UI.dart';
 import 'package:amazon_clone/Widgets/Button_UI.dart';
 import 'package:amazon_clone/Widgets/app_bar.dart';
+import 'package:amazon_clone/Widgets/custom_main_button.dart';
 import 'package:amazon_clone/utilities/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:amazon_clone/Provider/userDetailsProvider.dart';
+import 'package:amazon_clone/utilities/theme.dart';
+import 'package:amazon_clone/Resources/cloudFirestore_method.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SellScreen extends StatefulWidget {
   const SellScreen({Key? key}) : super(key: key);
@@ -19,6 +24,7 @@ class _SellScreenState extends State<SellScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController cost = TextEditingController();
   Uint8List? image;
+  List<int> keysForDiscount = [0, 70, 60, 50];
   bool isLoading = false;
   Size size = getScreenSize();
 
@@ -132,10 +138,47 @@ class _SellScreenState extends State<SellScreen> {
                   ],
                 ),
               ),
-              button2('Sell', Colors.amber, () { submit();}),
-              button2('Back', Colors.grey.shade400, () {
-                Navigator.pop(context);
-              })
+              CustomMainButton(
+                            child: const Text(
+                              "Sell",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            color: yellowColor,
+                            isLoading: isLoading,
+                            onPressed: () async {
+                              String output = await CloudFirestoreClass()
+                                  .uploadProductToDatabase(
+                                      image: image,
+                                      productName: name.text,
+                                      rawCost: cost.text,
+                                      discount: keysForDiscount[selected - 1],
+                                      sellerName: "Sheeta",
+                                          // Provider.of<UserDetailsProvider>(
+                                          //         context,
+                                          //         listen: false)
+                                          //     .userDetails
+                                          //     .name,
+                                      sellerUid: FirebaseAuth
+                                          .instance.currentUser!.uid);
+                              if (output == "success") {
+                                Utils().showSnackBar(
+                                    context: context,
+                                    content: "Posted Product");
+                              } else {
+                                Utils().showSnackBar(
+                                    context: context, content: output);
+                              }
+                            }),
+                        CustomMainButton(
+                            child: const Text(
+                              "Back",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            color: Colors.grey[300]!,
+                            isLoading: false,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            })
             ],
           ),
         ),

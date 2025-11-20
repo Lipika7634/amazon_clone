@@ -10,7 +10,20 @@
 // import 'package:amazon_clone/screens/more_screen.dart';
 // import 'package:amazon_clone/widgets/simple_product_widget.dart';
 
+import 'package:amazon_clone/Pages/account.dart';
+import 'package:amazon_clone/Pages/cart.dart';
+import 'package:amazon_clone/Pages/home.dart';
+import 'package:amazon_clone/Pages/items.dart';
+import 'package:flutter/material.dart';
+
 const double kAppBarHeight = 80;
+
+List<Widget> pages = [
+  home(),
+  Account(),
+  cart(),
+  items(),
+];
 
 const List<String> options = [
   "Your Orders",
